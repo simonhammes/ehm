@@ -1,3 +1,4 @@
+use clap::builder::PossibleValue;
 use clap::{Parser, ValueEnum};
 use notify_rust::error::Error;
 use notify_rust::{Hint, Notification, Timeout};
@@ -10,16 +11,30 @@ use std::time::Duration;
 struct Args {
     #[arg()]
     duration: f32,
-
-    #[clap(value_enum)]
     unit: Unit,
 }
 
-#[derive(Clone, Debug, ValueEnum)]
+#[derive(Clone, Debug)]
 enum Unit {
     Seconds,
     Minutes,
     Hours,
+}
+
+impl ValueEnum for Unit {
+    fn value_variants<'a>() -> &'a [Self] {
+        &[Unit::Seconds, Unit::Minutes, Unit::Hours]
+    }
+
+    fn to_possible_value(&self) -> Option<PossibleValue> {
+        let value = match self {
+            // These aliases are hidden. See https://github.com/clap-rs/clap/issues/4416.
+            Self::Seconds => PossibleValue::new("seconds").alias("second").alias("s"),
+            Self::Minutes => PossibleValue::new("minutes").alias("min").alias("m"),
+            Self::Hours => PossibleValue::new("hours").alias("hour").alias("h"),
+        };
+        Some(value)
+    }
 }
 
 fn main() -> Result<(), Error> {
