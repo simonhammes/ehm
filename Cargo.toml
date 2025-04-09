@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.35", features = ["derive"] }
-notify-rust = "4.11.6"
+notify-rust = "4.11.7"
